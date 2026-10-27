@@ -26,7 +26,7 @@ main() {
     local elapsed=$((now - last_run))
     local elapsed_minutes=$((elapsed / 60))
 
-    if [ "$elapsed_minutes" -lt "$MINUTES_INTERVAL" ] && [ "$elapsed_minutes" -gt 0 ]; then
+    if [ "$elapsed_minutes" -lt "$MINUTES_INTERVAL" ]; then
       log "Last run was $elapsed_minutes minutes ago (need $MINUTES_INTERVAL minutes interval)"
       should_run=0
     fi
