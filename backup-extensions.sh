@@ -74,21 +74,16 @@ main() {
 
     # If we have content, commit and push to backup repo
     if [ -d "$BACKUP_REPO/tmp_backup" ] && [ "$(ls -A "$BACKUP_REPO/tmp_backup" 2>/dev/null | wc -l)" -gt 0 ]; then
-      # Clean any previous extension dirs in backup
-      rm -rf "$BACKUP_REPO/extensions"-*
+      # Move staged content to a permanent extensions dir
       rm -rf "$BACKUP_REPO/extensions"
-
-      # Move staged content to extensions dir
-      mkdir -p "$BACKUP_REPO/extensions"
-      mv "$BACKUP_REPO/tmp_backup"/* "$BACKUP_REPO/extensions/" 2>/dev/null || true
+      mv "$BACKUP_REPO/tmp_backup" "$BACKUP_REPO/extensions"
 
       cd "$BACKUP_REPO"
 
       # Check if there are actual changes
       if git diff --quiet 2>/dev/null; then
         log "No changes detected in extensions after copy"
-        rm -rf "$BACKUP_REPO/tmp_backup"
-        rm -rf "$BACKUP_REPO/extensions"
+        # Still keep the extensions dir, just reset timeout
         return 0
       fi
 
@@ -103,10 +98,6 @@ main() {
     else
       log "No extension data to backup"
     fi
-
-    # Cleanup
-    rm -rf "$BACKUP_REPO/tmp_backup"
-    rm -rf "$BACKUP_REPO/extensions"
   else
     log "Skipping backup run (interval not reached)"
   fi
